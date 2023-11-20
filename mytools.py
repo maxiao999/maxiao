@@ -1,12 +1,32 @@
-#   导入各种包
+# 导入各种包
 import pandas as pd
 from pyreadstat import pyreadstat
 import matplotlib.pyplot as plt
 
-#绘图设置
-plt.rcParams["font.sans-serif"]=["SimHei"]#设置字体
+# 绘图设置
+plt.rcParams["font.sans-serif"] = ["SimHei"]  # 设置字体
 
-#读取SPSS格式数据
+# 读取SPSS格式数据
+
+
+def 绘制单个类别变量柱状图(数据表, 变量: str):
+    """ 绘制单个类别变量柱状 """
+    x = 数据表[变量].value_counts().index
+    y = 数据表[变量].value_counts(normalize=True).values * 100
+    # 创建图
+    fig, ax = plt.subplots()
+    # 绘制柱状图
+    rects1 = ax.bar(x, y)
+    # 设置x轴变量名称
+    ax.set_xlabel(变量)
+    # 设置y轴最大值
+    ax.set_ylim(ymax=100)
+    # 在柱上方显示对应的值
+    ax.bar_label(rects1, fmt="%.1f", padding=3)
+    # 显示图形
+    plt.show()
+
+
 def 读取SPSS数据(文件所在位置及名称):
     """ 读取SPSS文件，保留标签内容和有序变量顺序 """
     result, metadata = pyreadstat.read_sav(
@@ -14,14 +34,13 @@ def 读取SPSS数据(文件所在位置及名称):
     return result, metadata
 
 
-def 有序变量描述统计函数(表名,变量名):
+def 有序变量描述统计函数(表名, 变量名):
     """ 对有序类别变量进行描述统计 """
     result = 表名[变量名].value_counts(sort=False)
-    描述统计表= pd.DataFrame(result)
-    描述统计表['比例']=描述统计表['count']/描述统计表["count"].sum()
+    描述统计表 = pd.DataFrame(result)
+    描述统计表['比例'] = 描述统计表['count'] / 描述统计表['count'].sum()
     描述统计表['累计比例'] = 描述统计表['比例'].cumsum()
-    return 描述统计表 
-
+    return 描述统计表
 
 
 def 数值变量描述统计1(数据表, 变量名):
@@ -30,6 +49,7 @@ def 数值变量描述统计1(数据表, 变量名):
     平均值 = result['mean']
     标准差 = result['std']
     return 中位数, 平均值, 标准差
+
 
 def 数值变量描述统计(数据表, 变量名):
     """ 对数值变量进行描述统计 """
@@ -61,6 +81,7 @@ def goodmanKruska_tau_y(df, x: str, y: str) -> float:
 
     return tau_y
 
+
 def 相关系数强弱判断(相关系数值):
     """ 相关系数强弱的判断 """
     if 相关系数值 >= 0.8:
@@ -73,6 +94,7 @@ def 相关系数强弱判断(相关系数值):
         return '弱相关'
     else:
         return '极弱相关或无相关'
-    
-    def 制作交叉表(数据表, 自变量, 因变量):
+
+
+def 制作交叉表(数据表, 自变量, 因变量):
     return pd.crosstab(数据表[自变量], 数据表[因变量], normalize='columns', margins=True)
