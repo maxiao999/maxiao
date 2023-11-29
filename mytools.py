@@ -98,3 +98,22 @@ def 相关系数强弱判断(相关系数值):
 
 def 制作交叉表(数据表, 自变量, 因变量):
     return pd.crosstab(数据表[自变量], 数据表[因变量], normalize='columns', margins=True)
+
+def 计算单变量均值置信区间():
+    import pandas as pd
+    from scipy import stats
+    file_path = R"output\movie_data_cleaned.csv"
+    df_movies = pd.read_csv(file_path)
+    # 计算均值和标准误差
+    mean = df_movies['average'].mean()
+    std_error = stats.sem(df_movies['average'])
+    # 设定置信水平
+    confidence_level = 0.95
+    # 设定自由度
+    df = len(df_movies['average']) - 1
+    # 计算置信区间
+    confidence_interval = stats.t.interval(confidence_level, df, loc=mean, scale=std_error)
+    # 输出结果
+    print(F"均值：{mean: .2f}")
+    print(F"均值在置信水平{confidence_level}下的置信区间为：", confidence_interval)
+    return ()
